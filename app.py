@@ -29,8 +29,16 @@ directory = "treino"  # Altere para o caminho correto se necessário
 knowledge_base = load_knowledge_base_from_files(directory)
 knowledge_texts = list(knowledge_base.values())
 
-# Calcular os embeddings para a base de conhecimento
-knowledge_embeddings = model(knowledge_texts)
+# Calcular os embeddings para a base de conhecimento (feito apenas uma vez)
+@st.cache(allow_output_mutation=True)
+def calculate_embeddings(texts):
+    return model(texts)
+
+knowledge_embeddings = calculate_embeddings(knowledge_texts)
+
+# Função para calcular a similaridade cosseno entre dois vetores
+def cosine_similarity(a, b):
+    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
 # Função para encontrar a resposta mais próxima
 def get_response(question):
@@ -40,17 +48,13 @@ def get_response(question):
     question_embedding = question_embedding.numpy()
     knowledge_embeddings_numpy = knowledge_embeddings.numpy()
     
-    # Normalizando os embeddings para evitar que a magnitude dos vetores interfira no cálculo de similaridade
-    question_embedding_norm = question_embedding / np.linalg.norm(question_embedding)
-    knowledge_embeddings_norm = knowledge_embeddings_numpy / np.linalg.norm(knowledge_embeddings_numpy, axis=1)[:, np.newaxis]
-    
-    # Cálculo da similaridade
-    similarity_scores = np.dot(knowledge_embeddings_norm, question_embedding_norm.T)  # Cálculo da similaridade por produto escalar
+    # Calculando a similaridade cosseno entre a pergunta e a base de conhecimento
+    similarity_scores = np.array([cosine_similarity(question_embedding, knowledge_embedding) for knowledge_embedding in knowledge_embeddings_numpy])
     best_match_index = np.argmax(similarity_scores)
     best_match_score = similarity_scores[best_match_index]
     
-    # Se a similaridade for alta, retorna a resposta, caso contrário, retorna uma mensagem de erro
-    if best_match_score > 0.5:  # Limite para considerar uma boa correspondência
+    # Se a similaridade for maior que 0.6, retorna a resposta, caso contrário, retorna uma mensagem de erro
+    if best_match_score > 0.6:  # Limite de 0.6 pode ser ajustado para uma resposta mais precisa
         response = knowledge_base[list(knowledge_base.keys())[best_match_index]]
     else:
         response = "Desculpe, não sei a resposta."
