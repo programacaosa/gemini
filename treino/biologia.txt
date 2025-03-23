@@ -1,0 +1,8 @@
+A biologia é a ciência que estuda os seres vivos, seu comportamento, estrutura, funcionamento e evolução. Ela abrange áreas como genética, zoologia, botânica e ecologia.
+
+- **Genética**: Estuda os genes e a hereditariedade, explicando como características são passadas de uma geração para a outra.
+- **Zoologia**: Foca no estudo dos animais, sua biologia, classificação e ecologia.
+- **Botânica**: Trata do estudo das plantas, incluindo seu crescimento, reprodução e evolução.
+- **Ecologia**: Analisa as interações dos organismos com o ambiente e entre si, ajudando a entender os ecossistemas.
+
+A biologia tem um papel fundamental na medicina, agricultura, conservação e pesquisa científica.
